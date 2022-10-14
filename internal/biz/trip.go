@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-//Trip 行程
+// Trip 行程
 type Trip struct {
 	TripId      string //行程ID
 	MatchMarker string //匹配标记[进站抵消 单边进 单边出 补登进 补登出 出站票]

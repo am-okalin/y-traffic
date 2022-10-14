@@ -5,18 +5,6 @@ import (
 	"y-traffic/internal/biz"
 )
 
-func TestSaveTrans(t *testing.T) {
-	list, err := biz.IC2Trans(biz.ICTest)
-	if err != nil {
-		t.Error(err)
-	}
-	err = biz.SaveTrans(list)
-	if err != nil {
-		t.Error(err)
-	}
-	t.Log("ok")
-}
-
 func TestAnalysis(t *testing.T) {
 	trans, err := biz.IC2Trans(biz.ICData)
 	if err != nil {
@@ -38,4 +26,19 @@ func TestAnalysis(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log("ok")
+}
+
+func TestTrans1(t *testing.T) {
+	list1, err := biz.IC2Trans(biz.ICData)
+	if err != nil {
+		t.Error(err)
+	}
+	m1 := biz.TransGroup(list1, "TransDate")
+	t.Log(len(list1), len(m1))
+
+	for date, list2 := range m1 {
+		m2 := biz.TransGroup(list2, "TicketId")
+		t.Log(date, len(m2))
+	}
+	t.Log("done")
 }

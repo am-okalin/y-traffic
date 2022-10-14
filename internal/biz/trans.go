@@ -3,20 +3,22 @@ package biz
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"reflect"
 	"strings"
 	"time"
 	"y-traffic/internal/data"
 )
 
-//Trans 进出站表
+// Trans 进出站
 type Trans struct {
-	TransId     string    //进出站ID
+	TransCode   string    //交通类型码[21进站 22出站]
 	TicketId    string    //票ID
 	Line        string    //地铁线路
-	StationName string    //站台名称
 	StationId   string    //站台ID
-	TransCode   string    //交通类型码[21进站 22出站]
+	StationName string    //站台名称
+	TransId     string    //进出站ID
 	TransTime   time.Time //进出站时间
+	TransDate   string    //进出站日期(凌晨1点前属于前一天)
 }
 
 func hash(list ...string) string {
@@ -28,12 +30,16 @@ func hash(list ...string) string {
 	return hex.EncodeToString(b)
 }
 
-//TransId 进出类型+车站+时间+票=生成行程唯一ID
-func TransId(trans Trans) string {
-	list := []string{trans.TransCode, trans.StationId, trans.TransTime.Format("20060102150405"), trans.TicketId}
-	return strings.Join(list, "_")
-	//todo::使用hash编码生成唯一id
+// SetTransId 进出类型+车站+时间+票=生成行程唯一ID
+func (t *Trans) SetTransId() {
+	list := []string{t.TransCode, t.StationId, t.TransTime.Format("20060102150405"), t.TicketId}
+	//也可使用hash编码生成唯一id
 	//return hash(list...)
+	t.TransId = strings.Join(list, "_")
+}
+
+func (t Trans) StrByField(groupBy string) string {
+	return reflect.ValueOf(t).FieldByName(groupBy).String()
 }
 
 func IC2Trans(fname string) ([]Trans, error) {
@@ -44,18 +50,37 @@ func IC2Trans(fname string) ([]Trans, error) {
 	m, rowLen := Table2Map(table)
 	list := make([]Trans, rowLen)
 	for i := 0; i < rowLen; i++ {
-		list[i].TicketId = m["TICKET_ID"][i]
-		list[i].TransCode = m["TRANS_CODE"][i]
-		list[i].Line = m["TXN_STATION_ID"][i][0:2]
-		list[i].StationId = m["TXN_STATION_ID"][i]
-		list[i].StationName = StationNameById(m["TXN_STATION_ID"][i])
-		list[i].TransTime, err = time.Parse("20060102150405", m["TXN_DATE"][i]+m["TXN_TIME"][i])
+		transTime, err := time.Parse("20060102150405", m["TXN_DATE"][i]+m["TXN_TIME"][i])
 		if err != nil {
 			return nil, err
 		}
-		list[i].TransId = TransId(list[i])
+		list[i].TransCode = m["TRANS_CODE"][i]
+		list[i].TicketId = m["TICKET_ID"][i]
+		list[i].Line = m["TXN_STATION_ID"][i][0:2]
+		list[i].StationId = m["TXN_STATION_ID"][i]
+		list[i].StationName = StationNameById(m["TXN_STATION_ID"][i])
+		list[i].TransTime = transTime
+		list[i].TransDate = transTime.Add(-1 * time.Hour).Format("060102")
+		list[i].SetTransId()
 	}
 	return list, nil
+}
+
+func TransGroup(list []Trans, groupBy string) map[string][]Trans {
+	numM := make(map[string]int)
+	for _, trans := range list {
+		key := trans.StrByField(groupBy)
+		numM[key]++
+	}
+	m := make(map[string][]Trans, len(numM))
+	for i, trans := range list {
+		key := trans.StrByField(groupBy)
+		if m[key] == nil {
+			m[key] = make([]Trans, 0, numM[key])
+		}
+		m[key] = append(m[key], list[i])
+	}
+	return m
 }
 
 func SaveTrans(list []Trans) error {
