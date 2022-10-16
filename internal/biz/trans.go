@@ -6,8 +6,15 @@ import (
 	"reflect"
 	"strings"
 	"time"
-	"y-traffic/internal/data"
 )
+
+const (
+	In              = "21"
+	Out             = "22"
+	TransTimeFormat = "20060102150405"
+)
+
+var transCodes = []string{In, Out}
 
 // Trans 进出站
 type Trans struct {
@@ -32,7 +39,7 @@ func hash(list ...string) string {
 
 // SetTransId 进出类型+车站+时间+票=生成行程唯一ID
 func (t *Trans) SetTransId() {
-	list := []string{t.TransCode, t.StationId, t.TransTime.Format("20060102150405"), t.TicketId}
+	list := []string{t.TransCode, t.StationId, t.TransTime.Format(TransTimeFormat), t.TicketId}
 	//也可使用hash编码生成唯一id
 	//return hash(list...)
 	t.TransId = strings.Join(list, "_")
@@ -50,7 +57,7 @@ func IC2Trans(fname string) ([]Trans, error) {
 	m, rowLen := Table2Map(table)
 	list := make([]Trans, rowLen)
 	for i := 0; i < rowLen; i++ {
-		transTime, err := time.Parse("20060102150405", m["TXN_DATE"][i]+m["TXN_TIME"][i])
+		transTime, err := time.Parse(TransTimeFormat, m["TXN_DATE"][i]+m["TXN_TIME"][i])
 		if err != nil {
 			return nil, err
 		}
@@ -81,16 +88,4 @@ func TransGroup(list []Trans, groupBy string) map[string][]Trans {
 		m[key] = append(m[key], list[i])
 	}
 	return m
-}
-
-func SaveTrans(list []Trans) error {
-	db, err := data.NewDb(data.NewDail(data.Source))
-	if err != nil {
-		return err
-	}
-	res := db.Create(&list)
-	if res.Error != nil {
-		return res.Error
-	}
-	return nil
 }
