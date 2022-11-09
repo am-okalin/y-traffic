@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"y-traffic/common"
+	"y-traffic/table"
 )
 
 const (
@@ -50,7 +52,7 @@ func (t Trans) StrByField(groupBy string) string {
 }
 
 func IC2Trans(fname string) ([]Trans, error) {
-	table, err := Unmarshal(fname, '\t')
+	table, err := table.Csv2Table(fname, common.Comma)
 	if err != nil {
 		return nil, err
 	}

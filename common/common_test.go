@@ -1,8 +1,9 @@
-package internal
+package common
 
 import (
 	"testing"
-	"y-traffic/internal/biz"
+	"y-traffic/biz"
+	"y-traffic/table"
 )
 
 func append2Trans(arrs ...[]biz.Trans) []biz.Trans {
@@ -18,7 +19,7 @@ func append2Trans(arrs ...[]biz.Trans) []biz.Trans {
 }
 
 func TestAnalysis(t *testing.T) {
-	table, err := biz.Unmarshal(biz.TransFile, ',')
+	table, err := table.Csv2Table(TransData, ',')
 	if err != nil {
 		t.Error(err)
 	}
@@ -27,15 +28,15 @@ func TestAnalysis(t *testing.T) {
 	weekend := append2Trans(dateM["210818"], dateM["210819"])
 	working := append2Trans(dateM["210816"], dateM["210817"], dateM["210820"], dateM["210821"], dateM["210822"])
 	interval := biz.NewMinuteInterval(15)
-	err = biz.Marshal(biz.Analysis29, interval.Interval2Table(dateM["210816"]))
+	err = table.Table2Csv(Analysis29, interval.Interval2Table(dateM["210816"]))
 	if err != nil {
 		t.Error(err)
 	}
-	err = biz.Marshal(biz.Analysis28Weekend, interval.Interval2Table(weekend))
+	err = table.Table2Csv(Analysis28Weekend, interval.Interval2Table(weekend))
 	if err != nil {
 		t.Error(err)
 	}
-	err = biz.Marshal(biz.Analysis28Working, interval.Interval2Table(working))
+	err = table.Table2Csv(Analysis28Working, interval.Interval2Table(working))
 	if err != nil {
 		t.Error(err)
 	}
@@ -43,11 +44,11 @@ func TestAnalysis(t *testing.T) {
 }
 
 func TestTransIntegration(t *testing.T) {
-	trips, err := biz.YD2Trip(biz.YDData)
+	trips, err := biz.YD2Trip(YDData)
 	if err != nil {
 		t.Error(err)
 	}
-	list, err := biz.IC2Trans(biz.ICData)
+	list, err := biz.IC2Trans(ICData)
 	if err != nil {
 		t.Error(err)
 	}
@@ -57,7 +58,7 @@ func TestTransIntegration(t *testing.T) {
 	list = append(list, biz.Trip2Trans(trips)...)
 	t.Log("数据融合成功")
 	table := biz.Trans2Table(list)
-	err = biz.Marshal(biz.TransFile, table)
+	err = table.Table2Csv(TransData, table)
 	if err != nil {
 		t.Error(err)
 	}

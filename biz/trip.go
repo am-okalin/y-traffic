@@ -2,6 +2,8 @@ package biz
 
 import (
 	"time"
+	"y-traffic/common"
+	"y-traffic/table"
 )
 
 // Trip 行程
@@ -15,7 +17,7 @@ type Trip struct {
 }
 
 func YD2Trip(fname string) ([]Trip, error) {
-	table, err := Unmarshal(fname, '\t')
+	table, err := table.Csv2Table(fname, common.Comma)
 	if err != nil {
 		return nil, err
 	}
