@@ -1,4 +1,4 @@
-package table
+package tableconv
 
 import (
 	"encoding/csv"

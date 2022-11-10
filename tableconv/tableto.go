@@ -1,4 +1,4 @@
-package table
+package tableconv
 
 import (
 	"encoding/csv"
@@ -6,7 +6,7 @@ import (
 )
 
 //ToM 将二维数组转换为map
-func ToM(table [][]string) map[string][]string {
+func ToM(table [][]string) (map[string][]string, int) {
 	rl := len(table)
 	cl := len(table[0])
 
@@ -22,7 +22,7 @@ func ToM(table [][]string) map[string][]string {
 		}
 	}
 
-	return m
+	return m, rl - 1
 }
 
 //ToObj 将二维数组转换为对象数组

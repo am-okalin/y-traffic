@@ -6,8 +6,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
-	"y-traffic/common"
-	"y-traffic/table"
+	"y-traffic/tableconv"
 )
 
 const (
@@ -52,11 +51,11 @@ func (t Trans) StrByField(groupBy string) string {
 }
 
 func IC2Trans(fname string) ([]Trans, error) {
-	table, err := table.Csv2Table(fname, common.Comma)
+	table, err := tableconv.Csv2Table(fname, Comma)
 	if err != nil {
 		return nil, err
 	}
-	m, rowLen := Table2Map(table)
+	m, rowLen := tableconv.ToM(table)
 	list := make([]Trans, rowLen)
 	for i := 0; i < rowLen; i++ {
 		transTime, err := time.Parse(TransTimeFormat, m["TXN_DATE"][i]+m["TXN_TIME"][i])

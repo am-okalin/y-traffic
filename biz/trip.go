@@ -2,8 +2,7 @@ package biz
 
 import (
 	"time"
-	"y-traffic/common"
-	"y-traffic/table"
+	"y-traffic/tableconv"
 )
 
 // Trip 行程
@@ -17,11 +16,11 @@ type Trip struct {
 }
 
 func YD2Trip(fname string) ([]Trip, error) {
-	table, err := table.Csv2Table(fname, common.Comma)
+	table, err := tableconv.Csv2Table(fname, Comma)
 	if err != nil {
 		return nil, err
 	}
-	m, rowLen := Table2Map(table)
+	m, rowLen := tableconv.ToM(table)
 	list := make([]Trip, 0, rowLen)
 	for i := 0; i < rowLen; i++ {
 		if m["匹配标记"][i] == "进站抵消" || m["匹配标记"][i] == "单边进" || m["匹配标记"][i] == "单边出" {
