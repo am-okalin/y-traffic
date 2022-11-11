@@ -15,7 +15,8 @@ const (
 	Analysis29        = "../file/analysis_2_9.csv"
 	Analysis210       = "../file/analysis_2_10.csv"
 
-	PrefixLine = "../file/line/"
+	PrefixLine     = "../file/line/"
+	PrefixLineDate = "../file/linedate/"
 )
 
 func Trip2Trans(trips []Trip) []Trans {

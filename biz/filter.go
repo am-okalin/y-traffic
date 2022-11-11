@@ -25,7 +25,7 @@ func Filter(origin []Trans) []Trans {
 		if trans.TransCode != In && trans.TransCode != Out {
 			continue
 		}
-		if trans.TransTime.Hour() > 0 && trans.TransTime.Hour() < 6 {
+		if trans.TransTime.Hour() >= 0 && trans.TransTime.Hour() < 6 {
 			continue
 		}
 		all = append(all, origin[i])
