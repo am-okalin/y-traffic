@@ -3,20 +3,18 @@ package biz
 const (
 	Comma = '\t'
 
-	ICTest    = "../file/IC_test.txt"
-	ICData    = "../file/IC20210816-22.txt"
-	YDData    = "../file/YD20210816-22.txt"
-	Stations  = "../file/stations.csv"
-	TransData = "../file/trans.csv"
-	TransTest = "../file/trans_test.csv"
+	ICData    = "../file/source/IC20210816-22.txt"
+	YDData    = "../file/source/YD20210816-22.txt"
+	Stations  = "../file/source/stations.csv"
+	TransData = "../file/source/trans.csv"
 
-	Analysis28Weekend = "../file/analysis_2_8_weekend.csv"
-	Analysis28Working = "../file/analysis_2_8_working.csv"
-	Analysis29        = "../file/analysis_2_9.csv"
-	Analysis210       = "../file/analysis_2_10.csv"
+	Analysis28Weekend = "../file/source/analysis_2_8_weekend.csv"
+	Analysis28Working = "../file/source/analysis_2_8_working.csv"
+	Analysis29        = "../file/source/analysis_2_9.csv"
+	Analysis210       = "../file/source/analysis_2_10.csv"
 
-	PrefixLine     = "../file/line/"
-	PrefixLineDate = "../file/linedate/"
+	PrefixLine     = "../file/source/line/"
+	PrefixLineDate = "../file/source/linedate/"
 )
 
 func Trip2Trans(trips []Trip) []Trans {
