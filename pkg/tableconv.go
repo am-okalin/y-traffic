@@ -1,14 +1,15 @@
-package biz
+package pkg
 
 import (
+	"github.com/am-okalin/kit/tableconv"
+	"github.com/am-okalin/y-traffic/filter"
 	"time"
-	"y-traffic/tableconv"
 )
 
 // Table2Trans 将二维数组转为对象
-func Table2Trans(table [][]string) []Trans {
+func Table2Trans(table [][]string) []filter.Trans {
 	m, rowLen := tableconv.ToM(table)
-	list := make([]Trans, rowLen)
+	list := make([]filter.Trans, rowLen)
 	for i := 0; i < rowLen; i++ {
 		list[i].TransCode = m["TransCode"][i]
 		list[i].TicketId = m["TicketId"][i]
@@ -16,13 +17,13 @@ func Table2Trans(table [][]string) []Trans {
 		list[i].StationId = m["StationId"][i]
 		list[i].TransId = m["TransId"][i]
 		list[i].TransDate = m["TransDate"][i]
-		list[i].TransTime, _ = time.Parse(TransTimeFormat, m["TransTime"][i])
+		list[i].TransTime, _ = time.Parse(filter.TransTimeFormat, m["TransTime"][i])
 	}
 	return list
 }
 
 // Trans2Table 将对象转换为二维数组
-func Trans2Table(list []Trans) [][]string {
+func Trans2Table(list []filter.Trans) [][]string {
 	//todo::用反射处理并抽离公共包
 	length := len(list)
 	table := make([][]string, 0, length+1)
@@ -44,7 +45,7 @@ func Trans2Table(list []Trans) [][]string {
 			list[i].StationId,
 			list[i].StationName,
 			list[i].TransId,
-			list[i].TransTime.Format(TransTimeFormat),
+			list[i].TransTime.Format(filter.TransTimeFormat),
 			list[i].TransDate,
 		})
 	}

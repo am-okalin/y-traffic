@@ -1,4 +1,6 @@
-package biz
+package search
+
+import "github.com/am-okalin/y-traffic/filter"
 
 const (
 	Comma = '\t'
@@ -17,8 +19,8 @@ const (
 	PrefixLineDate = "../file/source/linedate/"
 )
 
-func Trip2Trans(trips []Trip) []Trans {
-	list := make([]Trans, 0, len(trips)*2)
+func Trip2Trans(trips []filter.Trip) []filter.Trans {
+	list := make([]filter.Trans, 0, len(trips)*2)
 	for _, trip := range trips {
 		list = append(list, trip.In)
 		list = append(list, trip.Out)
@@ -26,12 +28,12 @@ func Trip2Trans(trips []Trip) []Trans {
 	return list
 }
 
-func Append2Trans(arrs ...[]Trans) []Trans {
+func Append2Trans(arrs ...[]filter.Trans) []filter.Trans {
 	length := 0
 	for _, arr := range arrs {
 		length += len(arr)
 	}
-	list := make([]Trans, 0, length)
+	list := make([]filter.Trans, 0, length)
 	for i, _ := range arrs {
 		list = append(arrs[i])
 	}

@@ -1,7 +1,8 @@
-package biz
+package search
 
 import (
 	"fmt"
+	"github.com/am-okalin/y-traffic/filter"
 	"strconv"
 	"time"
 )
@@ -55,8 +56,8 @@ func (mi MinuteInterval) Interval(t time.Time) int {
 	return mi.list[mi.length-1]
 }
 
-//IntervalMap 时间间隔起时分钟=>客流数量
-func (mi MinuteInterval) IntervalMap(list []Trans) map[int]int {
+// IntervalMap 时间间隔起时分钟=>客流数量
+func (mi MinuteInterval) IntervalMap(list []filter.Trans) map[int]int {
 	m := make(map[int]int, mi.Len())
 	for _, trans := range list {
 		key := mi.Interval(trans.TransTime)
@@ -65,7 +66,7 @@ func (mi MinuteInterval) IntervalMap(list []Trans) map[int]int {
 	return m
 }
 
-func (mi MinuteInterval) Interval2Table(list []Trans) [][]string {
+func (mi MinuteInterval) Interval2Table(list []filter.Trans) [][]string {
 	var i int
 	m := mi.IntervalMap(list)
 	table := make([][]string, len(m)+1)

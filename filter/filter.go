@@ -1,6 +1,15 @@
-package biz
+package filter
 
-import "sort"
+import (
+	"sort"
+)
+
+const (
+	Comma     = '\t'
+	ICData    = "../file/source/IC20210816-22.txt"
+	YDData    = "../file/source/YD20210816-22.txt"
+	TransData = "../file/source/trans.csv"
+)
 
 func FilterByGroup(oldList []Trans) []Trans {
 	dateM := TransGroup(oldList, "TransDate")
