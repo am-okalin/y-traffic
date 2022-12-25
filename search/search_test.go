@@ -3,7 +3,6 @@ package search
 import (
 	"github.com/am-okalin/kit/tableconv"
 	"github.com/am-okalin/y-traffic/filter"
-	"github.com/am-okalin/y-traffic/pkg"
 	"testing"
 )
 
@@ -13,7 +12,7 @@ func TestAnalysis(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	list := pkg.Table2Trans(table)
+	list := filter.Table2Trans(table)
 	dateM := filter.TransGroup(list, "TransDate")
 	weekend := Append2Trans(dateM["210818"], dateM["210819"])
 	working := Append2Trans(dateM["210816"], dateM["210817"], dateM["210820"], dateM["210821"], dateM["210822"])
@@ -39,12 +38,12 @@ func TestLine(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	list := pkg.Table2Trans(table)
+	list := filter.Table2Trans(table)
 	TransDateM := filter.TransGroup(list, "TransDate")
 	LineM := filter.TransGroup(TransDateM["210816"], "Line")
 
 	for line, trans := range LineM {
-		err = tableconv.ToCsv(pkg.Trans2Table(trans), PrefixLine+line+".csv")
+		err = tableconv.ToCsv(filter.Trans2Table(trans), PrefixLine+line+".csv")
 		if err != nil {
 			t.Error(err)
 		}
@@ -58,7 +57,7 @@ func TestLineDate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	list := pkg.Table2Trans(table)
+	list := filter.Table2Trans(table)
 	TransDateM := filter.TransGroup(list, "TransDate")
 	LineM := filter.TransGroup(TransDateM["210816"], "Line")
 

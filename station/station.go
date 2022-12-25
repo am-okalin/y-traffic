@@ -1,8 +1,12 @@
-package search
+package station
 
 import (
 	"github.com/am-okalin/kit/tableconv"
 	"log"
+)
+
+const (
+	Stations = "../file/station/stations.csv"
 )
 
 // StationM stationId=>stationName

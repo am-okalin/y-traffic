@@ -2,7 +2,7 @@ package filter
 
 import (
 	"github.com/am-okalin/kit/tableconv"
-	"github.com/am-okalin/y-traffic/search"
+	"github.com/am-okalin/y-traffic/station"
 	"reflect"
 	"strings"
 	"time"
@@ -12,6 +12,7 @@ const (
 	In              = "21"
 	Out             = "22"
 	TransTimeFormat = "20060102150405"
+	//TransTimeFormat = time.RFC3339
 )
 
 var transCodes = []string{In, Out}
@@ -37,7 +38,7 @@ func (t *Trans) SetTransId() {
 }
 
 func (t *Trans) StrByField(groupBy string) string {
-	return reflect.ValueOf(t).FieldByName(groupBy).String()
+	return reflect.ValueOf(t).Elem().FieldByName(groupBy).String()
 }
 
 func TransGroup(list []Trans, groupBy string) map[string][]Trans {
@@ -73,10 +74,58 @@ func IC2Trans(fname string) ([]Trans, error) {
 		list[i].TicketId = m["TICKET_ID"][i]
 		list[i].Line = m["TXN_STATION_ID"][i][0:2]
 		list[i].StationId = m["TXN_STATION_ID"][i]
-		list[i].StationName = search.StationNameById(m["TXN_STATION_ID"][i])
+		list[i].StationName = station.StationNameById(m["TXN_STATION_ID"][i])
 		list[i].TransTime = transTime
 		list[i].TransDate = transTime.Add(-1 * time.Hour).Format("060102")
 		list[i].SetTransId()
 	}
 	return list, nil
+}
+
+// Table2Trans 将二维数组转为对象
+func Table2Trans(table [][]string) []Trans {
+	m, rowLen := tableconv.ToM(table)
+	list := make([]Trans, rowLen)
+	for i := 0; i < rowLen; i++ {
+		list[i].TransCode = m["TransCode"][i]
+		list[i].TicketId = m["TicketId"][i]
+		list[i].Line = m["Line"][i]
+		list[i].StationId = m["StationId"][i]
+		list[i].TransId = m["TransId"][i]
+		list[i].TransDate = m["TransDate"][i]
+		list[i].TransTime, _ = time.Parse(TransTimeFormat, m["TransTime"][i])
+	}
+	return list
+}
+
+// Trans2Table 将对象转换为二维数组
+func Trans2Table(list []Trans) [][]string {
+	//todo::用反射处理并抽离公共包
+	length := len(list)
+	table := make([][]string, 0, length+1)
+	table = append(table, []string{
+		"TransCode",
+		"TicketId",
+		"Line",
+		"StationId",
+		"StationName",
+		"TransId",
+		"TransTime",
+		"TransDate",
+		"CreateAt",
+	})
+	for i := 0; i < length; i++ {
+		table = append(table, []string{
+			list[i].TransCode,
+			list[i].TicketId,
+			list[i].Line,
+			list[i].StationId,
+			list[i].StationName,
+			list[i].TransId,
+			list[i].TransTime.Format(TransTimeFormat),
+			list[i].TransDate,
+			list[i].TransTime.Format(time.RFC3339),
+		})
+	}
+	return table
 }

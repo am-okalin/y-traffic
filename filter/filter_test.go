@@ -2,7 +2,6 @@ package filter
 
 import (
 	"github.com/am-okalin/kit/tableconv"
-	"github.com/am-okalin/y-traffic/pkg"
 	"testing"
 )
 
@@ -21,7 +20,7 @@ func TestTransIntegration(t *testing.T) {
 	t.Log("IC过滤成功")
 	list = append(list, FilterByGroup(Trip2Trans(trips))...)
 	t.Log("YD过滤成功, 数据融合成功")
-	tab := pkg.Trans2Table(list)
+	tab := Trans2Table(list)
 	err = tableconv.ToCsv(tab, TransData)
 	if err != nil {
 		t.Error(err)

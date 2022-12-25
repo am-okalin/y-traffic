@@ -3,20 +3,12 @@ package search
 import "github.com/am-okalin/y-traffic/filter"
 
 const (
-	Comma = '\t'
-
-	ICData    = "../file/source/IC20210816-22.txt"
-	YDData    = "../file/source/YD20210816-22.txt"
-	Stations  = "../file/source/stations.csv"
-	TransData = "../file/source/trans.csv"
-
+	TransData         = "../file/source/trans.csv"
 	Analysis28Weekend = "../file/source/analysis_2_8_weekend.csv"
 	Analysis28Working = "../file/source/analysis_2_8_working.csv"
 	Analysis29        = "../file/source/analysis_2_9.csv"
-	Analysis210       = "../file/source/analysis_2_10.csv"
-
-	PrefixLine     = "../file/source/line/"
-	PrefixLineDate = "../file/source/linedate/"
+	PrefixLine        = "../file/source/line/"
+	PrefixLineDate    = "../file/source/linedate/"
 )
 
 func Trip2Trans(trips []filter.Trip) []filter.Trans {
