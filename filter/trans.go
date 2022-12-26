@@ -19,14 +19,14 @@ var transCodes = []string{In, Out}
 
 // Trans 进出站
 type Trans struct {
-	TransCode   string    //交通类型码[21进站 22出站]
-	TicketId    string    //票ID
-	Line        string    //地铁线路
-	StationId   string    //站台ID
-	StationName string    //站台名称
-	TransId     string    //进出站ID
-	TransTime   time.Time //进出站时间
-	TransDate   string    //进出站日期(凌晨1点前属于前一天)
+	TransCode   string    `gorm:"index"`      //交通类型码[21进站 22出站]
+	TicketId    string    `gorm:"index"`      //票ID
+	Line        string    `gorm:"index"`      //地铁线路
+	StationId   string    `gorm:"index"`      //站台ID
+	StationName string    `gorm:"index"`      //站台名称
+	TransId     string    `gorm:"primaryKey"` //进出站ID
+	TransTime   time.Time `gorm:"index"`      //进出站时间
+	TransDate   string    `gorm:"index"`      //进出站日期(凌晨1点前属于前一天)
 }
 
 // SetTransId 进出类型+车站+时间+票=生成行程唯一ID
@@ -91,6 +91,7 @@ func Table2Trans(table [][]string) []Trans {
 		list[i].TicketId = m["TicketId"][i]
 		list[i].Line = m["Line"][i]
 		list[i].StationId = m["StationId"][i]
+		list[i].StationName = m["StationName"][i]
 		list[i].TransId = m["TransId"][i]
 		list[i].TransDate = m["TransDate"][i]
 		list[i].TransTime, _ = time.Parse(TransTimeFormat, m["TransTime"][i])
