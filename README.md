@@ -68,7 +68,17 @@ where trans_date = "210821"
 group by time order by time;
 
 
+# 1. 0816_08-10_车站分组_数量排序
+select station_name, count(*) as count
+from trans
+where trans_time between "2021-08-16 08:00:00" and "2021-08-16 10:00:00"
+group by station_name order by count desc limit 10;
 
+# 2. 0816_17-19_车站分组_数量排序
+select station_name, count(*) as count
+from trans
+where trans_time between "2021-08-16 17:00:00" and "2021-08-16 19:00:00"
+group by station_name order by count desc limit 10;
 
 
 
