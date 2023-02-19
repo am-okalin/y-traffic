@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"fmt"
 	"github.com/am-okalin/kit/tableconv"
 	"github.com/am-okalin/y-traffic/station"
 	"reflect"
@@ -129,4 +130,27 @@ func Trans2Table(list []Trans) [][]string {
 		})
 	}
 	return table
+}
+
+// Trans2Trip 有序trans数组转换为trip列表
+func Trans2Trip(ticketId string, list []Trans) []Trip {
+	if len(list) == 0 {
+		return nil
+	}
+
+	l := len(list) / 2
+	trips := make([]Trip, l)
+
+	for i := 0; i < l; i++ {
+		trips[i] = Trip{
+			TripId:      fmt.Sprintf("%s_%d", ticketId, i),
+			MatchMarker: "",
+			InTransId:   list[i*2].TransId,
+			OutTransId:  list[i*2+1].TransId,
+			In:          list[i*2],
+			Out:         list[i*2+1],
+		}
+	}
+
+	return trips
 }

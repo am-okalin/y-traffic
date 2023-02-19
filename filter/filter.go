@@ -10,6 +10,7 @@ const (
 	YDData        = "../file/source/YD20210816-22.txt"
 	TransData     = "../file/filter/trans.csv"
 	TransDataTest = "../file/test/trans.csv"
+	TripsData     = "../file/filter/trips.csv"
 )
 
 func FilterByGroup(oldList []Trans) []Trans {
@@ -41,12 +42,20 @@ func Filter(origin []Trans) []Trans {
 		all = append(all, origin[i])
 	}
 
+	return InOutMatch(all)
+}
+
+func InOutMatch(all []Trans) []Trans {
+	if len(all) <= 1 {
+		return nil
+	}
+
 	//过滤进出站配对失败的数据
 	var tc int
 	right := make([]Trans, 0, len(all))
 	for i, trans := range all {
 		if trans.TransCode == transCodes[tc] {
-			if trans.TransCode == Out && len(right) > 0 && trans.StationId == right[len(right)-1].StationId {
+			if trans.TransCode == Out && len(right) > 0 && trans.StationName == right[len(right)-1].StationName {
 				//进出站抵消
 				right = right[:len(right)-1]
 			} else {
@@ -67,5 +76,6 @@ func Filter(origin []Trans) []Trans {
 	if len(right) == 0 {
 		return nil
 	}
+
 	return right
 }
