@@ -72,7 +72,7 @@ func GetTrips(origin []filter.Trans) ([]filter.Trip, error) {
 		//进出站匹配
 		sort.Slice(list, func(i, j int) bool { return list[i].TransTime.Before(list[j].TransTime) })
 		m[ticketId] = filter.InOutMatch(list)
-		trips = append(trips, filter.Trans2Trip(ticketId, m[ticketId])...)
+		trips = append(trips, filter.TripsByTicket(ticketId, m[ticketId])...)
 	}
 
 	return trips, nil

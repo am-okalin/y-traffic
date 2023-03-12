@@ -1,5 +1,9 @@
-github.com/am-okalin/kit v0.0.0-20221222074603-6f7ad8fc50c7 h1:aZJdvxxQEBsEuoLYCgvpHXw+VNO7Er655taESttoqpc=
-github.com/am-okalin/kit v0.0.0-20221222074603-6f7ad8fc50c7/go.mod h1:xBeLjByRvIWHo3vafbQ59klFo2IYHW8BwIz0yAbwq64=
+github.com/am-okalin/kit v0.0.0-20230312085815-2b1cd4cbd6fa h1:7xzku8MCELThRMMyNSYxAJyytyptxNhO5uUI1T0jals=
+github.com/am-okalin/kit v0.0.0-20230312085815-2b1cd4cbd6fa/go.mod h1:xBeLjByRvIWHo3vafbQ59klFo2IYHW8BwIz0yAbwq64=
+github.com/am-okalin/kit v0.0.0-20230312090246-c00ed47d8f0f h1:l3FfHFzuDFlT+9AdnvUrwp8EZtOtabOO0xOnZF12LfM=
+github.com/am-okalin/kit v0.0.0-20230312090246-c00ed47d8f0f/go.mod h1:xBeLjByRvIWHo3vafbQ59klFo2IYHW8BwIz0yAbwq64=
+github.com/am-okalin/kit v0.0.0-20230312092140-a1d33fbc836c h1:uvRTE4/xMgdpPazg7tCPT0/WsTed00PP4OceuOBgKSw=
+github.com/am-okalin/kit v0.0.0-20230312092140-a1d33fbc836c/go.mod h1:xBeLjByRvIWHo3vafbQ59klFo2IYHW8BwIz0yAbwq64=
 github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=

@@ -24,12 +24,39 @@ func TestTransIntegration(t *testing.T) {
 	t.Log("IC过滤成功")
 
 	//对YD数据进行拆分 -> 清洗 -> 过滤 -> 追加到Trans
-	list = append(list, FilterByGroup(Trip2Trans(trips))...)
+	list = append(list, FilterByGroup(Trips2Trans(trips))...)
 	t.Log("YD过滤成功, 数据融合成功")
 
 	//将清洗后的数据导入文件
 	tab := Trans2Table(list)
 	err = tableconv.ToCsv(tab, TransData)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log("done")
+}
+
+func TestTripCsv(t *testing.T) {
+	// tran table
+	tranT, err := tableconv.Csv2Table(TransData, ',')
+	if err != nil {
+		t.Error(err)
+	}
+
+	// tran list
+	trans := Table2Trans(tranT)
+
+	// trip list
+	trips, err := Trans2Trips(trans)
+	if err != nil {
+		t.Error(err)
+	}
+
+	//trip table
+	tripT := Trips2Table(trips)
+
+	//trips csv
+	err = tableconv.ToCsv(tripT, TripsData)
 	if err != nil {
 		t.Error(err)
 	}

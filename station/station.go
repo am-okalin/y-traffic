@@ -2,32 +2,52 @@ package station
 
 import (
 	"github.com/am-okalin/kit/tableconv"
-	"log"
+	"strconv"
 )
 
 const (
-	Stations = "../file/station/stations.csv"
+	Stations    = "../file/station/stations.csv"
+	OldStations = "../file/station/stations_old.csv"
 )
 
-// StationM stationId=>stationName
-var StationM = InitStationM()
-
-// InitStationM 初始化StationM
-func InitStationM() map[string]string {
-	table, err := tableconv.Csv2Table(Stations, ',')
-	if err != nil {
-		log.Fatal(err)
-	}
-	m, rowLen := tableconv.ToM(table)
-	stationM := make(map[string]string, rowLen)
-
-	for i := 0; i < rowLen; i++ {
-		stationM[m["station_id"][i]] = m["station_name"][i]
-	}
-	return stationM
+type Obj struct {
+	Line string
+	Id   string
+	Name string
+	Vi   int
 }
 
-// StationNameById 获取车站名称
-func StationNameById(id string) string {
-	return StationM[id]
+// Objs 返回站台列表
+func Objs() []Obj {
+	table, err := tableconv.Csv2Table(Stations, ',')
+	if err != nil {
+		panic(err)
+	}
+
+	stations := make([]Obj, len(table)-1)
+	for i := 1; i < len(table); i++ {
+		vi, err := strconv.Atoi(table[i][3])
+		if err != nil {
+			panic(err)
+		}
+
+		stations[i-1] = Obj{
+			Line: table[i][0],
+			Id:   table[i][1],
+			Name: table[i][2],
+			Vi:   vi,
+		}
+	}
+
+	return stations
+}
+
+// IdM 初始化StationM
+func IdM() map[string]Obj {
+	m := make(map[string]Obj)
+	stations := Objs()
+	for i, station := range stations {
+		m[station.Id] = stations[i]
+	}
+	return m
 }

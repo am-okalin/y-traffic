@@ -2,9 +2,8 @@ package filter
 
 import (
 	"fmt"
-	"github.com/am-okalin/kit/tableconv"
-	"github.com/am-okalin/y-traffic/station"
 	"reflect"
+	"sort"
 	"strings"
 	"time"
 )
@@ -32,9 +31,8 @@ type Trans struct {
 
 // SetTransId 进出类型+车站+时间+票=生成行程唯一ID
 func (t *Trans) SetTransId() {
+	//return hash(list...) //也可使用hash编码生成唯一id
 	list := []string{t.TransCode, t.StationId, t.TransTime.Format(TransTimeFormat), t.TicketId}
-	//也可使用hash编码生成唯一id
-	//return hash(list...)
 	t.TransId = strings.Join(list, "_")
 }
 
@@ -59,51 +57,10 @@ func TransGroup(list []Trans, groupBy string) map[string][]Trans {
 	return m
 }
 
-func IC2Trans(fname string) ([]Trans, error) {
-	table, err := tableconv.Csv2Table(fname, Comma)
-	if err != nil {
-		return nil, err
-	}
-	m, rowLen := tableconv.ToM(table)
-	list := make([]Trans, rowLen)
-	for i := 0; i < rowLen; i++ {
-		transTime, err := time.Parse(TransTimeFormat, m["TXN_DATE"][i]+m["TXN_TIME"][i])
-		if err != nil {
-			return nil, err
-		}
-		list[i].TransCode = m["TRANS_CODE"][i]
-		list[i].TicketId = m["TICKET_ID"][i]
-		list[i].Line = m["TXN_STATION_ID"][i][0:2]
-		list[i].StationId = m["TXN_STATION_ID"][i]
-		list[i].StationName = station.StationNameById(m["TXN_STATION_ID"][i])
-		list[i].TransTime = transTime
-		list[i].TransDate = transTime.Add(-1 * time.Hour).Format("060102")
-		list[i].SetTransId()
-	}
-	return list, nil
-}
-
-// Table2Trans 将二维数组转为对象
-func Table2Trans(table [][]string) []Trans {
-	m, rowLen := tableconv.ToM(table)
-	list := make([]Trans, rowLen)
-	for i := 0; i < rowLen; i++ {
-		list[i].TransCode = m["TransCode"][i]
-		list[i].TicketId = m["TicketId"][i]
-		list[i].Line = m["Line"][i]
-		list[i].StationId = m["StationId"][i]
-		list[i].StationName = m["StationName"][i]
-		list[i].TransId = m["TransId"][i]
-		list[i].TransDate = m["TransDate"][i]
-		list[i].TransTime, _ = time.Parse(TransTimeFormat, m["TransTime"][i])
-	}
-	return list
-}
-
 // Trans2Table 将对象转换为二维数组
-func Trans2Table(list []Trans) [][]string {
+func Trans2Table(trans []Trans) [][]string {
 	//todo::用反射处理并抽离公共包
-	length := len(list)
+	length := len(trans)
 	table := make([][]string, 0, length+1)
 	table = append(table, []string{
 		"TransCode",
@@ -118,22 +75,22 @@ func Trans2Table(list []Trans) [][]string {
 	})
 	for i := 0; i < length; i++ {
 		table = append(table, []string{
-			list[i].TransCode,
-			list[i].TicketId,
-			list[i].Line,
-			list[i].StationId,
-			list[i].StationName,
-			list[i].TransId,
-			list[i].TransTime.Format(TransTimeFormat),
-			list[i].TransDate,
-			list[i].TransTime.Format(time.RFC3339),
+			trans[i].TransCode,
+			trans[i].TicketId,
+			trans[i].Line,
+			trans[i].StationId,
+			trans[i].StationName,
+			trans[i].TransId,
+			trans[i].TransTime.Format(TransTimeFormat),
+			trans[i].TransDate,
+			trans[i].TransTime.Format(time.RFC3339),
 		})
 	}
 	return table
 }
 
-// Trans2Trip 有序trans数组转换为trip列表
-func Trans2Trip(ticketId string, list []Trans) []Trip {
+// TripsByTicket 有序trans数组转换为trip列表
+func TripsByTicket(ticketId string, list []Trans) []Trip {
 	if len(list) == 0 {
 		return nil
 	}
@@ -153,4 +110,23 @@ func Trans2Trip(ticketId string, list []Trans) []Trip {
 	}
 
 	return trips
+}
+
+// Trans2Trips 将所有trans都转换为trip
+func Trans2Trips(origin []Trans) ([]Trip, error) {
+	// 按ticker_id分组匹配
+	trips := make([]Trip, 0)
+	m := TransGroup(origin, "TicketId")
+	for ticketId, list := range m {
+		if len(list) <= 1 {
+			m[ticketId] = nil
+			continue
+		}
+		//进出站匹配
+		sort.Slice(list, func(i, j int) bool { return list[i].TransTime.Before(list[j].TransTime) })
+		m[ticketId] = InOutMatch(list)
+		trips = append(trips, TripsByTicket(ticketId, m[ticketId])...)
+	}
+
+	return trips, nil
 }
