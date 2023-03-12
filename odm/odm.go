@@ -12,6 +12,7 @@ const (
 	OdmAll = "../file/odm/all.csv"
 	Odm1   = "../file/odm/1.csv"
 	Odm2   = "../file/odm/2.csv"
+	Odm3   = "../file/odm/3.csv"
 )
 
 func Odm(start, end time.Time, stations []string, fname string) error {

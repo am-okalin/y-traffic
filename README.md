@@ -192,17 +192,30 @@ where trans_date = "210821"
 group by time order by time;
 
 
-# 1. 0816_08-10_车站分组_数量排序
+# 1.0816_08-10_车站分组_数量排序
 select station_name, count(*) as count
 from trans
 where trans_time between "2021-08-16 08:00:00" and "2021-08-16 10:00:00"
 group by station_name order by count desc limit 10;
 
-# 2. 0816_17-19_车站分组_数量排序
+# 2.0816_17-19_车站分组_数量排序
 select station_name, count(*) as count
 from trans
 where trans_time between "2021-08-16 17:00:00" and "2021-08-16 19:00:00"
 group by station_name order by count desc limit 10;
+
+# 3.0816_06:30-09_按部分车站分组
+select station_name, count(*) as count
+from trans
+where trans_time between "2021-08-16 06:30:00" and "2021-08-16 09:00:00"
+  and station_name in ("朝天门","小什字","较场口","七星岗","两路口","鹅岭","大坪","石油路","歇台子","重庆工商大学","四公里","南坪","工贸","铜元局","牛角沱","华新街","观音桥","红旗河沟","嘉州路","郑家院子","唐家院子","狮子坪","重庆北站南广场","龙头寺","童家院子","刘家坪","大剧院","江北城","五里店","红土地","黄泥磅","花卉园","大龙山","冉家坝","光电园","仁济","上新街","海棠溪","罗家坝","南湖")
+group by station_name ;
+
+# 4.0816_按部分车站分组
+select station_name, count(*) as count
+from trans
+where station_name in ("朝天门","小什字","较场口","七星岗","两路口","鹅岭","大坪","石油路","歇台子","重庆工商大学","四公里","南坪","工贸","铜元局","牛角沱","华新街","观音桥","红旗河沟","嘉州路","郑家院子","唐家院子","狮子坪","重庆北站南广场","龙头寺","童家院子","刘家坪","大剧院","江北城","五里店","红土地","黄泥磅","花卉园","大龙山","冉家坝","光电园","仁济","上新街","海棠溪","罗家坝","南湖")
+group by station_name ;
 ```
 
 
