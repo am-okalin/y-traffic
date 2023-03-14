@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"fmt"
 	"github.com/am-okalin/kit/dijkstra"
 	"github.com/am-okalin/y-traffic/station"
 	"math"
@@ -23,7 +24,25 @@ type Navigation struct {
 	weight float64
 }
 
-// 求任意一点到任意一点的路径并存贮: 1.构件图 2.执行最短路径计算 3.记录结果集 sv ev path
+func NameM(objs []station.Obj) map[string]Vertex {
+	length := VertexLen(objs)
+	vertexes := Vertexes(objs, length)
+	m := make(map[string]Vertex, length)
+	for i, vertex := range vertexes {
+		m[vertex.Name] = vertexes[i]
+	}
+	return m
+}
+
+func VertexM(objs []station.Obj) map[int]Vertex {
+	length := VertexLen(objs)
+	vertexes := Vertexes(objs, length)
+	m := make(map[int]Vertex, length)
+	for i, vertex := range vertexes {
+		m[vertex.Vi] = vertexes[i]
+	}
+	return m
+}
 
 func VertexLen(objs []station.Obj) int {
 	set := make(map[int]bool)
@@ -34,9 +53,7 @@ func VertexLen(objs []station.Obj) int {
 }
 
 func Vertexes(objs []station.Obj, length int) []Vertex {
-
 	list := make([]Vertex, length)
-
 	for _, obj := range objs {
 		if list[obj.Vi].Ids != nil {
 			list[obj.Vi].Ids = append(list[obj.Vi].Ids, obj.Id)
@@ -48,7 +65,6 @@ func Vertexes(objs []station.Obj, length int) []Vertex {
 			}
 		}
 	}
-
 	return list
 }
 
@@ -67,11 +83,13 @@ func InitGraph(objs []station.Obj, length int) dijkstra.Graph {
 			tmp = objs[i].Line
 		}
 	}
+
+	//fmt.Println(graph)
+
 	return graph
 }
 
-func Navigations() []Navigation {
-	objs := station.Objs()
+func Navigations(objs []station.Obj) []Navigation {
 	length := VertexLen(objs)
 	graph := InitGraph(objs, length)
 	vertexes := Vertexes(objs, length)
@@ -82,7 +100,6 @@ func Navigations() []Navigation {
 			if start.Vi == end.Vi {
 				continue
 			}
-
 			tmp := Navigation{sv: start.Vi, ev: end.Vi}
 			dijkstra.GetPrev(end.Vi, prev, &tmp.path)
 			if dist[end.Vi] == math.MaxFloat64 {
@@ -94,4 +111,22 @@ func Navigations() []Navigation {
 		}
 	}
 	return navigations
+}
+
+// PathMap start_station_name + end_station_name => path
+func PathMap(objs []station.Obj) map[string][]Vertex {
+	vm := VertexM(objs)
+	navigations := Navigations(objs)
+	nl := len(navigations)
+
+	m := make(map[string][]Vertex, nl)
+	for _, na := range navigations {
+		//key := fmt.Sprintf("%d_%d", na.sv, na.ev)
+		key := fmt.Sprintf("%s_%s", vm[na.sv].Name, vm[na.ev].Name)
+		m[key] = make([]Vertex, 0, len(na.path))
+		for _, vi := range na.path {
+			m[key] = append(m[key], vm[vi])
+		}
+	}
+	return m
 }

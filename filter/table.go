@@ -16,7 +16,7 @@ func Table2Trans(table [][]string) []Trans {
 		list[i].StationId = m["StationId"][i]
 		list[i].StationName = m["StationName"][i]
 		list[i].TransId = m["TransId"][i]
-		list[i].TransDate = m["TransDate"][i]
+		list[i].Date = m["TransDate"][i]
 		list[i].TransTime, _ = time.Parse(TransTimeFormat, m["TransTime"][i])
 	}
 	return list

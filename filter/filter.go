@@ -14,7 +14,7 @@ const (
 )
 
 func FilterByGroup(oldList []Trans) []Trans {
-	dateM := TransGroup(oldList, "TransDate")
+	dateM := TransGroup(oldList, "Date")
 	newList := make([]Trans, 0, len(oldList)/10)
 	for _, dateList := range dateM {
 		TicketIdM := TransGroup(dateList, "TicketId")

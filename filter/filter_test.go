@@ -52,10 +52,12 @@ func TestTripCsv(t *testing.T) {
 		t.Error(err)
 	}
 
-	//trip table
-	tripT := Trips2Table(trips)
+	// set path
+	//pm := graph.PathMap(station.Objs())
+	//trips = SetTripPath(trips, pm)
 
 	//trips csv
+	tripT := Trips2Table(trips)
 	err = tableconv.ToCsv(tripT, TripsData)
 	if err != nil {
 		t.Error(err)

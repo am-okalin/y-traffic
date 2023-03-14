@@ -13,7 +13,7 @@ func TestAnalysis(t *testing.T) {
 		t.Error(err)
 	}
 	list := filter.Table2Trans(table)
-	dateM := filter.TransGroup(list, "TransDate")
+	dateM := filter.TransGroup(list, "Date")
 	weekend := Append2Trans(dateM["210818"], dateM["210819"])
 	working := Append2Trans(dateM["210816"], dateM["210817"], dateM["210820"], dateM["210821"], dateM["210822"])
 	interval := NewMinuteInterval(15)
@@ -39,7 +39,7 @@ func TestLine(t *testing.T) {
 		t.Error(err)
 	}
 	list := filter.Table2Trans(table)
-	TransDateM := filter.TransGroup(list, "TransDate")
+	TransDateM := filter.TransGroup(list, "Date")
 	LineM := filter.TransGroup(TransDateM["210816"], "Line")
 
 	for line, trans := range LineM {
@@ -58,7 +58,7 @@ func TestLineDate(t *testing.T) {
 		t.Error(err)
 	}
 	list := filter.Table2Trans(table)
-	TransDateM := filter.TransGroup(list, "TransDate")
+	TransDateM := filter.TransGroup(list, "Date")
 	LineM := filter.TransGroup(TransDateM["210816"], "Line")
 
 	interval := NewMinuteInterval(15)

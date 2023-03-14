@@ -26,7 +26,7 @@ type Trans struct {
 	StationName string    `gorm:"index"`      //站台名称
 	TransId     string    `gorm:"primaryKey"` //进出站ID
 	TransTime   time.Time `gorm:"index"`      //进出站时间
-	TransDate   string    `gorm:"index"`      //进出站日期(凌晨1点前属于前一天)
+	Date        string    `gorm:"index"`      //进出站日期(凌晨1点前属于前一天)
 }
 
 // SetTransId 进出类型+车站+时间+票=生成行程唯一ID
@@ -70,7 +70,7 @@ func Trans2Table(trans []Trans) [][]string {
 		"StationName",
 		"TransId",
 		"TransTime",
-		"TransDate",
+		"Date",
 		"CreateAt",
 	})
 	for i := 0; i < length; i++ {
@@ -82,7 +82,7 @@ func Trans2Table(trans []Trans) [][]string {
 			trans[i].StationName,
 			trans[i].TransId,
 			trans[i].TransTime.Format(TransTimeFormat),
-			trans[i].TransDate,
+			trans[i].Date,
 			trans[i].TransTime.Format(time.RFC3339),
 		})
 	}
@@ -100,12 +100,13 @@ func TripsByTicket(ticketId string, list []Trans) []Trip {
 
 	for i := 0; i < l; i++ {
 		trips[i] = Trip{
-			TripId:      fmt.Sprintf("%s_%d", ticketId, i),
-			MatchMarker: "",
-			InTransId:   list[i*2].TransId,
-			OutTransId:  list[i*2+1].TransId,
-			In:          list[i*2],
-			Out:         list[i*2+1],
+			TripId:     fmt.Sprintf("%s_%d", ticketId, i),
+			Date:       list[i*2].Date,
+			Path:       nil,
+			InTransId:  list[i*2].TransId,
+			OutTransId: list[i*2+1].TransId,
+			In:         list[i*2],
+			Out:        list[i*2+1],
 		}
 	}
 

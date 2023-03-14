@@ -18,10 +18,9 @@ func YD2Trip(fname string) ([]Trip, error) {
 			continue
 		}
 		tmp := Trip{
-			TripId:      m["行程编号"][i],
-			MatchMarker: m["匹配标记"][i],
-			InTransId:   m["进站行程编号"][i],
-			OutTransId:  m["出站行程编号"][i],
+			TripId:     m["行程编号"][i],
+			InTransId:  m["进站行程编号"][i],
+			OutTransId: m["出站行程编号"][i],
 			In: Trans{
 				TransCode:   In,
 				TicketId:    m["虚拟卡号"][i],
@@ -30,7 +29,7 @@ func YD2Trip(fname string) ([]Trip, error) {
 				StationName: m["进站车站"][i],
 				TransId:     m["进站行程编号"][i],
 				TransTime:   time.Time{},
-				TransDate:   "",
+				Date:        "",
 			},
 			Out: Trans{
 				TransCode:   Out,
@@ -40,19 +39,19 @@ func YD2Trip(fname string) ([]Trip, error) {
 				StationName: m["出站车站"][i],
 				TransId:     m["出站行程编号"][i],
 				TransTime:   time.Time{},
-				TransDate:   "",
+				Date:        "",
 			},
 		}
 		tmp.In.TransTime, err = time.Parse("2006/1/2 5:04:05", m["进站时间"][i])
 		if err != nil {
 			return nil, err
 		}
-		tmp.In.TransDate = tmp.In.TransTime.Add(-1 * time.Hour).Format("060102")
+		tmp.In.Date = tmp.In.TransTime.Add(-1 * time.Hour).Format("060102")
 		tmp.Out.TransTime, err = time.Parse("2006/1/2 5:04:05", m["出站时间"][i])
 		if err != nil {
 			return nil, err
 		}
-		tmp.Out.TransDate = tmp.Out.TransTime.Add(-1 * time.Hour).Format("060102")
+		tmp.Out.Date = tmp.Out.TransTime.Add(-1 * time.Hour).Format("060102")
 		list = append(list, tmp)
 	}
 	return list, nil
