@@ -1,4 +1,4 @@
-package filter
+package biz
 
 import (
 	"github.com/am-okalin/kit/tableconv"
@@ -37,14 +37,8 @@ func TestTransIntegration(t *testing.T) {
 }
 
 func TestTripCsv(t *testing.T) {
-	// tran table
-	tranT, err := tableconv.Csv2Table(TransData, ',')
-	if err != nil {
-		t.Error(err)
-	}
-
 	// tran list
-	trans := Table2Trans(tranT)
+	trans := Trans()
 
 	// trip list
 	trips, err := Trans2Trips(trans)
@@ -53,8 +47,8 @@ func TestTripCsv(t *testing.T) {
 	}
 
 	// set path
-	//pm := graph.PathMap(station.Objs())
-	//trips = SetTripPath(trips, pm)
+	pm := PathMap(Objs())
+	trips = SetTripPath(trips, pm)
 
 	//trips csv
 	tripT := Trips2Table(trips)

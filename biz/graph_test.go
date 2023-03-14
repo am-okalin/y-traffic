@@ -1,15 +1,13 @@
-package graph
+package biz
 
 import (
 	"fmt"
 	"github.com/am-okalin/kit/tableconv"
-	"github.com/am-okalin/y-traffic/filter"
-	"github.com/am-okalin/y-traffic/station"
 	"testing"
 )
 
 func Test1(t *testing.T) {
-	navigations := Navigations(station.Objs())
+	navigations := Navigations(Objs())
 	table, err := tableconv.Objs2Table(navigations)
 	if err != nil {
 		t.Error(err)
@@ -22,7 +20,7 @@ func Test1(t *testing.T) {
 }
 
 func Test2(t *testing.T) {
-	objs := station.Objs()
+	objs := Objs()
 	pm := PathMap(objs)
 	start := "临江门"
 	end := "尖顶坡"
@@ -32,8 +30,8 @@ func Test2(t *testing.T) {
 
 // 全网断面客流量， 指定时间
 func Test3(t *testing.T) {
-	trips := filter.Trips()
-	objs := station.Objs()
+	trips := Trips()
+	objs := Objs()
 	pm := PathMap(objs)
 	m := InitCsnm(pm)
 	for _, trip := range trips {

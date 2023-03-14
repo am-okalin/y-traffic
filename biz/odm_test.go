@@ -1,7 +1,6 @@
-package odm
+package biz
 
 import (
-	"github.com/am-okalin/y-traffic/station"
 	"testing"
 	"time"
 )
@@ -12,7 +11,7 @@ func TestOdmAll(t *testing.T) {
 	var start, _ = time.Parse(time.RFC3339, "2021-08-16T06:30:00Z")
 
 	m := make(map[string]bool)
-	for _, obj := range station.IdM() {
+	for _, obj := range IdM() {
 		m[obj.Name] = true
 	}
 	var allStations = make([]string, 0)

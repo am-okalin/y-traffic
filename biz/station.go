@@ -1,13 +1,8 @@
-package station
+package biz
 
 import (
 	"github.com/am-okalin/kit/tableconv"
 	"strconv"
-)
-
-const (
-	Stations    = "../file/station/stations.csv"
-	OldStations = "../file/station/stations_old.csv"
 )
 
 type Obj struct {

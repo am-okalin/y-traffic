@@ -1,9 +1,8 @@
-package graph
+package biz
 
 import (
 	"fmt"
 	"github.com/am-okalin/kit/dijkstra"
-	"github.com/am-okalin/y-traffic/station"
 	"math"
 )
 
@@ -24,7 +23,7 @@ type Navigation struct {
 	weight float64
 }
 
-func NameM(objs []station.Obj) map[string]Vertex {
+func NameM(objs []Obj) map[string]Vertex {
 	length := VertexLen(objs)
 	vertexes := Vertexes(objs, length)
 	m := make(map[string]Vertex, length)
@@ -34,7 +33,7 @@ func NameM(objs []station.Obj) map[string]Vertex {
 	return m
 }
 
-func VertexM(objs []station.Obj) map[int]Vertex {
+func VertexM(objs []Obj) map[int]Vertex {
 	length := VertexLen(objs)
 	vertexes := Vertexes(objs, length)
 	m := make(map[int]Vertex, length)
@@ -44,7 +43,7 @@ func VertexM(objs []station.Obj) map[int]Vertex {
 	return m
 }
 
-func VertexLen(objs []station.Obj) int {
+func VertexLen(objs []Obj) int {
 	set := make(map[int]bool)
 	for _, obj := range objs {
 		set[obj.Vi] = true
@@ -52,7 +51,7 @@ func VertexLen(objs []station.Obj) int {
 	return len(set)
 }
 
-func Vertexes(objs []station.Obj, length int) []Vertex {
+func Vertexes(objs []Obj, length int) []Vertex {
 	list := make([]Vertex, length)
 	for _, obj := range objs {
 		if list[obj.Vi].Ids != nil {
@@ -69,7 +68,7 @@ func Vertexes(objs []station.Obj, length int) []Vertex {
 }
 
 // InitGraph 初始化图
-func InitGraph(objs []station.Obj, length int) dijkstra.Graph {
+func InitGraph(objs []Obj, length int) dijkstra.Graph {
 	// 初始化节点
 	graph := dijkstra.NewSparseGraph(length)
 
@@ -89,7 +88,7 @@ func InitGraph(objs []station.Obj, length int) dijkstra.Graph {
 	return graph
 }
 
-func Navigations(objs []station.Obj) []Navigation {
+func Navigations(objs []Obj) []Navigation {
 	length := VertexLen(objs)
 	graph := InitGraph(objs, length)
 	vertexes := Vertexes(objs, length)
@@ -114,7 +113,7 @@ func Navigations(objs []station.Obj) []Navigation {
 }
 
 // PathMap start_station_name + end_station_name => path
-func PathMap(objs []station.Obj) map[string][]Vertex {
+func PathMap(objs []Obj) map[string][]Vertex {
 	vm := VertexM(objs)
 	navigations := Navigations(objs)
 	nl := len(navigations)
