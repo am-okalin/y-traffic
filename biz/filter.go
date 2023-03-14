@@ -10,14 +10,14 @@ func FilterByGroup(oldList []Tran) []Tran {
 	for _, dateList := range dateM {
 		TicketIdM := TransGroup(dateList, "TicketId")
 		for s, trans := range TicketIdM {
-			TicketIdM[s] = Filter(trans)
+			TicketIdM[s] = TranFilter(trans)
 			newList = append(newList, TicketIdM[s]...)
 		}
 	}
 	return newList
 }
 
-func Filter(origin []Tran) []Tran {
+func TranFilter(origin []Tran) []Tran {
 	//对进出站表按时间排序
 	sort.Slice(origin, func(i, j int) bool { return origin[i].TransTime.Before(origin[j].TransTime) })
 

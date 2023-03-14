@@ -1,7 +1,10 @@
 package biz
 
 import (
+	"fmt"
 	"github.com/am-okalin/kit/tableconv"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -22,6 +25,7 @@ const (
 	Odm1              = "../file/odm/1.csv"
 	Odm2              = "../file/odm/2.csv"
 	Odm3              = "../file/odm/3.csv"
+	Csn1              = "../file/csn/1.csv"
 )
 
 const (
@@ -115,6 +119,44 @@ func InitCsnm(pm map[string][]Vertex) map[string]int {
 		if len(vertexes) == 2 {
 			m[se] = 0
 		}
+	}
+	return m
+}
+
+func CsnMap(trips []Trip) map[string]int {
+	objs := Objs()
+	pm := PathMap(objs)
+	m := InitCsnm(pm)
+	for _, trip := range trips {
+		for i := 1; i < len(trip.Path); i++ {
+			key := fmt.Sprintf("%s_%s", trip.Path[i-1], trip.Path[i])
+			m[key]++
+		}
+	}
+	return m
+}
+
+func CsnTable(trips []Trip, stations []string) [][]string {
+	m := CsnMap(trips)
+	set := Arr2Set(stations)
+	table := make([][]string, 0)
+	table = append(table, []string{"sv", "ev", "num"})
+	for key, num := range m {
+		list := strings.Split(key, "_")
+		sv, ev := list[0], list[1]
+		if len(stations) == 0 {
+			table = append(table, []string{sv, ev, strconv.Itoa(num)})
+		} else if set[sv] && set[ev] {
+			table = append(table, []string{sv, ev, strconv.Itoa(num)})
+		}
+	}
+	return table
+}
+
+func Arr2Set(arr []string) map[string]bool {
+	m := make(map[string]bool, 0)
+	for _, s := range arr {
+		m[s] = true
 	}
 	return m
 }

@@ -42,22 +42,7 @@ func SetTripPath(trips []Trip, pm map[string][]Vertex) []Trip {
 func Trips2Table(trips []Trip) [][]string {
 	length := len(trips)
 	table := make([][]string, 0, length+1)
-	table = append(table, []string{
-		"Date",
-		"TripId",
-		"TicketId",
-		"InTransId",
-		"OutTransId",
-		"InTransTime",
-		"OutTransTime",
-		"InLine",
-		"OutLine",
-		"InStationId",
-		"OutStationId",
-		"InStationName",
-		"OutStationName",
-		"Path",
-	})
+	table = append(table, []string{"Date", "TripId", "TicketId", "InTransId", "OutTransId", "InTransTime", "OutTransTime", "InLine", "OutLine", "InStationId", "OutStationId", "InStationName", "OutStationName", "Path"})
 	for i := 0; i < length; i++ {
 		table = append(table, []string{
 			trips[i].In.Date,
@@ -109,5 +94,20 @@ func Trips() []Trip {
 		list[i].Out.StationName = m["OutStationName"][i]
 		list[i].Path = strings.Split(m["Path"][i], "-")
 	}
+	return list
+}
+
+func TripFilter(old []Trip, date string, start, end time.Time) []Trip {
+	list := make([]Trip, 0)
+	for i, trip := range old {
+		if trip.Date != date {
+			continue
+		}
+		if trip.Out.TransTime.Before(start) || trip.In.TransTime.After(end) {
+			continue
+		}
+		list = append(list, old[i])
+	}
+
 	return list
 }
