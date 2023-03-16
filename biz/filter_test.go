@@ -47,7 +47,7 @@ func TestTripCsv(t *testing.T) {
 	}
 
 	// set path
-	pm := PathMap(Objs())
+	pm := PathMap(Stations())
 	trips = SetTripPath(trips, pm)
 
 	//trips csv

@@ -97,6 +97,18 @@ func Trips() []Trip {
 	return list
 }
 
+func TripFilterDate(old []Trip, date string) []Trip {
+	list := make([]Trip, 0)
+	for i, trip := range old {
+		if trip.Date != date {
+			continue
+		}
+		list = append(list, old[i])
+	}
+
+	return list
+}
+
 func TripFilter(old []Trip, date string, start, end time.Time) []Trip {
 	list := make([]Trip, 0)
 	for i, trip := range old {

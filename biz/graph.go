@@ -23,7 +23,7 @@ type Navigation struct {
 	weight float64
 }
 
-func NameM(objs []Obj) map[string]Vertex {
+func NameVertexM(objs []Station) map[string]Vertex {
 	length := VertexLen(objs)
 	vertexes := Vertexes(objs, length)
 	m := make(map[string]Vertex, length)
@@ -33,7 +33,7 @@ func NameM(objs []Obj) map[string]Vertex {
 	return m
 }
 
-func VertexM(objs []Obj) map[int]Vertex {
+func ViVertexM(objs []Station) map[int]Vertex {
 	length := VertexLen(objs)
 	vertexes := Vertexes(objs, length)
 	m := make(map[int]Vertex, length)
@@ -43,7 +43,7 @@ func VertexM(objs []Obj) map[int]Vertex {
 	return m
 }
 
-func VertexLen(objs []Obj) int {
+func VertexLen(objs []Station) int {
 	set := make(map[int]bool)
 	for _, obj := range objs {
 		set[obj.Vi] = true
@@ -51,7 +51,7 @@ func VertexLen(objs []Obj) int {
 	return len(set)
 }
 
-func Vertexes(objs []Obj, length int) []Vertex {
+func Vertexes(objs []Station, length int) []Vertex {
 	list := make([]Vertex, length)
 	for _, obj := range objs {
 		if list[obj.Vi].Ids != nil {
@@ -68,7 +68,7 @@ func Vertexes(objs []Obj, length int) []Vertex {
 }
 
 // InitGraph 初始化图
-func InitGraph(objs []Obj, length int) dijkstra.Graph {
+func InitGraph(objs []Station, length int) dijkstra.Graph {
 	// 初始化节点
 	graph := dijkstra.NewSparseGraph(length)
 
@@ -88,7 +88,7 @@ func InitGraph(objs []Obj, length int) dijkstra.Graph {
 	return graph
 }
 
-func Navigations(objs []Obj) []Navigation {
+func Navigations(objs []Station) []Navigation {
 	length := VertexLen(objs)
 	graph := InitGraph(objs, length)
 	vertexes := Vertexes(objs, length)
@@ -113,8 +113,8 @@ func Navigations(objs []Obj) []Navigation {
 }
 
 // PathMap start_station_name + end_station_name => path
-func PathMap(objs []Obj) map[string][]Vertex {
-	vm := VertexM(objs)
+func PathMap(objs []Station) map[string][]Vertex {
+	vm := ViVertexM(objs)
 	navigations := Navigations(objs)
 	nl := len(navigations)
 

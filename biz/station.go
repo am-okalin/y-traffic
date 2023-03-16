@@ -5,28 +5,28 @@ import (
 	"strconv"
 )
 
-type Obj struct {
+type Station struct {
 	Line string
 	Id   string
 	Name string
 	Vi   int
 }
 
-// Objs 返回站台列表
-func Objs() []Obj {
-	table, err := tableconv.Csv2Table(Stations, ',')
+// Stations 返回站台列表
+func Stations() []Station {
+	table, err := tableconv.Csv2Table(StationsData, ',')
 	if err != nil {
 		panic(err)
 	}
 
-	stations := make([]Obj, len(table)-1)
+	stations := make([]Station, len(table)-1)
 	for i := 1; i < len(table); i++ {
 		vi, err := strconv.Atoi(table[i][3])
 		if err != nil {
 			panic(err)
 		}
 
-		stations[i-1] = Obj{
+		stations[i-1] = Station{
 			Line: table[i][0],
 			Id:   table[i][1],
 			Name: table[i][2],
@@ -37,10 +37,10 @@ func Objs() []Obj {
 	return stations
 }
 
-// IdM 初始化StationM
-func IdM() map[string]Obj {
-	m := make(map[string]Obj)
-	stations := Objs()
+// IdStationM 初始化StationM
+func IdStationM() map[string]Station {
+	m := make(map[string]Station)
+	stations := Stations()
 	for i, station := range stations {
 		m[station.Id] = stations[i]
 	}

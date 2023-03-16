@@ -1,10 +1,7 @@
 package biz
 
 import (
-	"fmt"
 	"github.com/am-okalin/kit/tableconv"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -19,13 +16,20 @@ const (
 	Analysis29        = "../file/source/analysis_2_9.csv"
 	PrefixLine        = "../file/source/line/"
 	PrefixLineDate    = "../file/source/linedate/"
-	Stations          = "../file/station/stations.csv"
+	StationsData      = "../file/station/stations.csv"
 	OldStations       = "../file/station/stations_old.csv"
 	OdmAll            = "../file/odm/all.csv"
 	Odm1              = "../file/odm/1.csv"
 	Odm2              = "../file/odm/2.csv"
 	Odm3              = "../file/odm/3.csv"
-	Csn1              = "../file/csn/1.csv"
+	Csn08167090past   = "../file/csn/08167090past.csv"
+	Csn08167090       = "../file/csn/08167090.csv"
+	Csn08166370       = "../file/csn/08166370.csv"
+	Csn0816           = "../file/csn/0816.csv"
+	Csn0817           = "../file/csn/0817.csv"
+	Csn0818           = "../file/csn/0818.csv"
+	Csn0819           = "../file/csn/0819.csv"
+	Csn0820           = "../file/csn/0820.csv"
 )
 
 const (
@@ -42,7 +46,7 @@ func IC2Trans(fname string) ([]Tran, error) {
 	}
 	m, rowLen := tableconv.ToM(table)
 	list := make([]Tran, rowLen)
-	stationM := IdM()
+	stationM := IdStationM()
 	for i := 0; i < rowLen; i++ {
 		transTime, err := time.Parse(TransTimeFormat, m["TXN_DATE"][i]+m["TXN_TIME"][i])
 		if err != nil {
@@ -110,53 +114,4 @@ func YD2Trip(fname string) ([]Trip, error) {
 		list = append(list, tmp)
 	}
 	return list, nil
-}
-
-// InitCsnm 断面客流量
-func InitCsnm(pm map[string][]Vertex) map[string]int {
-	m := make(map[string]int, 0)
-	for se, vertexes := range pm {
-		if len(vertexes) == 2 {
-			m[se] = 0
-		}
-	}
-	return m
-}
-
-func CsnMap(trips []Trip) map[string]int {
-	objs := Objs()
-	pm := PathMap(objs)
-	m := InitCsnm(pm)
-	for _, trip := range trips {
-		for i := 1; i < len(trip.Path); i++ {
-			key := fmt.Sprintf("%s_%s", trip.Path[i-1], trip.Path[i])
-			m[key]++
-		}
-	}
-	return m
-}
-
-func CsnTable(trips []Trip, stations []string) [][]string {
-	m := CsnMap(trips)
-	set := Arr2Set(stations)
-	table := make([][]string, 0)
-	table = append(table, []string{"sv", "ev", "num"})
-	for key, num := range m {
-		list := strings.Split(key, "_")
-		sv, ev := list[0], list[1]
-		if len(stations) == 0 {
-			table = append(table, []string{sv, ev, strconv.Itoa(num)})
-		} else if set[sv] && set[ev] {
-			table = append(table, []string{sv, ev, strconv.Itoa(num)})
-		}
-	}
-	return table
-}
-
-func Arr2Set(arr []string) map[string]bool {
-	m := make(map[string]bool, 0)
-	for _, s := range arr {
-		m[s] = true
-	}
-	return m
 }

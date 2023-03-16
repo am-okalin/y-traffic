@@ -11,7 +11,7 @@ func TestOdmAll(t *testing.T) {
 	var start, _ = time.Parse(time.RFC3339, "2021-08-16T06:30:00Z")
 
 	m := make(map[string]bool)
-	for _, obj := range IdM() {
+	for _, obj := range IdStationM() {
 		m[obj.Name] = true
 	}
 	var allStations = make([]string, 0)
