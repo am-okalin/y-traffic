@@ -43,6 +43,19 @@ func TestCsn08167090(t *testing.T) {
 	t.Log("done")
 }
 
+func TestCsn08166370past(t *testing.T) {
+	var end, _ = time.Parse(time.RFC3339, "2021-08-16T07:00:00Z")
+	var start, _ = time.Parse(time.RFC3339, "2021-08-16T06:30:00Z")
+	trips := TripFilter(Trips(), "210816", start, end)
+	table := CsnTable(trips, stations)
+	err := tableconv.ToCsv(table, Csn08166370past)
+
+	if err != nil {
+		t.Log(err)
+	}
+	t.Log("done")
+}
+
 func TestCsn08166370(t *testing.T) {
 	var end, _ = time.Parse(time.RFC3339, "2021-08-16T07:00:00Z")
 	var start, _ = time.Parse(time.RFC3339, "2021-08-16T06:30:00Z")

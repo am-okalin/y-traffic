@@ -24,6 +24,7 @@ const (
 	Odm3              = "../file/odm/3.csv"
 	Csn08167090past   = "../file/csn/08167090past.csv"
 	Csn08167090       = "../file/csn/08167090.csv"
+	Csn08166370past   = "../file/csn/08166370past.csv"
 	Csn08166370       = "../file/csn/08166370.csv"
 	Csn0816           = "../file/csn/0816.csv"
 	Csn0817           = "../file/csn/0817.csv"
