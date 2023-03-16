@@ -42,7 +42,7 @@ func CsnTable(trips []Trip, stationNames []string) [][]string {
 		//通过sv, ev交集算出线路
 		lines := Intersection(LinesByIds(sv.Ids), LinesByIds(ev.Ids))
 		if len(lines) > 1 {
-			fmt.Println(sv, ev) //todo::log
+			//fmt.Println(sv, ev) //todo::log
 		}
 		sid := IdByLine(lines[0], sv.Ids)
 		eid := IdByLine(lines[0], ev.Ids)
