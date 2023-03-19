@@ -46,3 +46,21 @@ func IdStationM() map[string]Station {
 	}
 	return m
 }
+
+func StationNames() []string {
+	stations := Stations()
+	m := make(map[string]bool)
+
+	for _, station := range stations {
+		m[station.Name] = true
+	}
+
+	names := make([]string, len(m))
+
+	for _, station := range stations {
+		if m[station.Name] {
+			names = append(names, station.Name)
+		}
+	}
+	return names
+}

@@ -8,7 +8,6 @@ import (
 const (
 	ICData            = "../file/source/IC20210816-22.txt"
 	YDData            = "../file/source/YD20210816-22.txt"
-	TransDataTest     = "../file/test/trans.csv"
 	TripsData         = "../file/filter/trips.csv"
 	TransData         = "../file/filter/trans.csv"
 	Analysis28Weekend = "../file/source/analysis_2_8_weekend.csv"
@@ -16,12 +15,9 @@ const (
 	Analysis29        = "../file/source/analysis_2_9.csv"
 	PrefixLine        = "../file/source/line/"
 	PrefixLineDate    = "../file/source/linedate/"
-	StationsData      = "../file/station/stations.csv"
-	OldStations       = "../file/station/stations_old.csv"
-	OdmAll            = "../file/odm/all.csv"
-	Odm1              = "../file/odm/1.csv"
-	Odm2              = "../file/odm/2.csv"
-	Odm3              = "../file/odm/3.csv"
+	StationsData      = "../file/station/pastNames.csv"
+	Odm0816           = "../file/odm/0816.csv"
+	Odm08160709past   = "../file/odm/08167090past.csv"
 	Csn08167090past   = "../file/csn/08167090past.csv"
 	Csn08167090       = "../file/csn/08167090.csv"
 	Csn08166370past   = "../file/csn/08166370past.csv"
@@ -39,6 +35,11 @@ const (
 	TransTimeFormat = "20060102150405"
 	//TransTimeFormat = time.RFC3339
 )
+
+var pastNames = []string{"朝天门", "小什字", "较场口", "七星岗", "两路口", "鹅岭", "大坪", "石油路", "歇台子", "重庆工商大学", "四公里",
+	"南坪", "工贸", "铜元局", "牛角沱", "华新街", "观音桥", "红旗河沟", "嘉州路", "郑家院子", "唐家院子", "狮子坪", "重庆北站南广场",
+	"龙头寺", "童家院子", "刘家坪", "大剧院", "江北城", "五里店", "红土地", "黄泥磅", "花卉园", "大龙山", "冉家坝", "光电园", "仁济",
+	"上新街", "海棠溪", "罗家坝", "南湖"}
 
 func IC2Trans(fname string) ([]Tran, error) {
 	table, err := tableconv.Csv2Table(fname, '\t')
