@@ -17,6 +17,7 @@ func FilterByGroup(oldList []Tran) []Tran {
 	return newList
 }
 
+// TranFilter 数据清洗
 func TranFilter(origin []Tran) []Tran {
 	//对进出站表按时间排序
 	sort.Slice(origin, func(i, j int) bool { return origin[i].TransTime.Before(origin[j].TransTime) })
@@ -36,6 +37,7 @@ func TranFilter(origin []Tran) []Tran {
 	return InOutMatch(all)
 }
 
+// InOutMatch 进出站匹配
 func InOutMatch(all []Tran) []Tran {
 	if len(all) <= 1 {
 		return nil

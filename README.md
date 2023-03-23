@@ -72,6 +72,200 @@ Trans{
 	list[i].TransDate = transTime.Add(-1 * time.Hour).Format("060102")
 	list[i].SetTransId()
 }
+
+## 进出站匹配&数据清洗
+// TranFilter 数据清洗
+func TranFilter(origin []Tran) []Tran {
+	//对进出站表按时间排序
+	sort.Slice(origin, func(i, j int) bool { return origin[i].TransTime.Before(origin[j].TransTime) })
+
+	//过滤部分 transCode错误 进出站时间错误 的数据
+	all := make([]Tran, 0, len(origin))
+	for i, trans := range origin {
+		if trans.TransCode != In && trans.TransCode != Out {
+			continue
+		}
+		if trans.TransTime.Hour() >= 0 && trans.TransTime.Hour() < 6 {
+			continue
+		}
+		all = append(all, origin[i])
+	}
+
+	return InOutMatch(all)
+}
+
+// InOutMatch 进出站匹配
+func InOutMatch(all []Tran) []Tran {
+	if len(all) <= 1 {
+		return nil
+	}
+
+	//过滤进出站配对失败的数据
+	var tc int
+	right := make([]Tran, 0, len(all))
+	for i, trans := range all {
+		if trans.TransCode == transCodes[tc] {
+			if trans.TransCode == Out && len(right) > 0 && trans.StationName == right[len(right)-1].StationName {
+				//进出站抵消
+				right = right[:len(right)-1]
+			} else {
+				//正常数据
+				right = append(right, all[i])
+			}
+			tc = (tc + 1) % 2
+		} else if trans.TransCode == In {
+			//多次进站取最后一个(多次出站取第一个)
+			right[len(right)-1] = all[i]
+		}
+	}
+
+	//匹配为奇数则去除最后一个
+	if len(right)%2 == 1 {
+		right = right[:len(right)-1]
+	}
+	if len(right) == 0 {
+		return nil
+	}
+
+	return right
+}
+
+
+## 获取OD表
+func Odm(StationNames []string, trips []Trip) map[string]map[string]int {
+	//初始化odm
+	length := len(StationNames)
+	odm := make(map[string]map[string]int, length)
+	for _, si := range StationNames {
+		odm[si] = make(map[string]int, length)
+		for _, sj := range StationNames {
+			odm[si][sj] = 0
+		}
+	}
+	for _, trip := range trips {
+		_, ok := odm[trip.In.StationName][trip.Out.StationName]
+		if ok {
+			odm[trip.In.StationName][trip.Out.StationName]++
+		}
+	}
+	return odm
+}
+
+## 最短路径规划
+// InitGraph 初始化图
+func InitGraph(objs []Station, length int) dijkstra.Graph {
+	// 初始化节点
+	graph := dijkstra.NewSparseGraph(length)
+
+	// 初始化边
+	tmp := objs[0].Line
+	for i := 1; i < len(objs); i++ {
+		if objs[i].Line == tmp {
+			graph.AddEdge(objs[i-1].Vi, objs[i].Vi, 1)
+			graph.AddEdge(objs[i].Vi, objs[i-1].Vi, 1)
+		} else {
+			tmp = objs[i].Line
+		}
+	}
+
+	fmt.Println(graph)
+
+	return graph
+}
+
+// Navigations 任意两点间最短路径
+func Navigations(objs []Station) []Navigation {
+	length := VertexLen(objs)
+	graph := InitGraph(objs, length)
+	vertexes := Vertexes(objs, length)
+	navigations := make([]Navigation, 0)
+	for _, start := range vertexes {
+		prev, dist := dijkstra.Dijkstra2(graph, start.Vi)
+		for _, end := range vertexes {
+			if start.Vi == end.Vi {
+				continue
+			}
+			tmp := Navigation{sv: start.Vi, ev: end.Vi}
+			dijkstra.GetPrev(end.Vi, prev, &tmp.path)
+			if dist[end.Vi] == math.MaxFloat64 {
+				tmp.weight = -1
+			} else {
+				tmp.weight = dist[end.Vi]
+			}
+			navigations = append(navigations, tmp)
+		}
+	}
+	return navigations
+}
+
+// PathMap start_station_name + end_station_name => path
+func PathMap(objs []Station) map[string][]Vertex {
+	vm := ViVertexM(objs)
+	navigations := Navigations(objs)
+	nl := len(navigations)
+
+	m := make(map[string][]Vertex, nl)
+	for _, na := range navigations {
+		//key := fmt.Sprintf("%d_%d", na.sv, na.ev)
+		key := fmt.Sprintf("%s_%s", vm[na.sv].Name, vm[na.ev].Name)
+		m[key] = make([]Vertex, 0, len(na.path))
+		for _, vi := range na.path {
+			m[key] = append(m[key], vm[vi])
+		}
+	}
+	return m
+}
+
+## 断面客流量
+// InitCsnm 断面客流量
+func InitCsnm(pm map[string][]Vertex) map[string]int {
+	m := make(map[string]int, 0)
+	for se, vertexes := range pm {
+		if len(vertexes) == 2 {
+			m[se] = 0
+		}
+	}
+	return m
+}
+
+func CsnMap(trips []Trip, stations []Station) map[string]int {
+	pm := PathMap(stations)
+	m := InitCsnm(pm)
+	for _, trip := range trips {
+		for i := 1; i < len(trip.Path); i++ {
+			key := fmt.Sprintf("%s_%s", trip.Path[i-1], trip.Path[i])
+			m[key]++
+		}
+	}
+	return m
+}
+
+func CsnTable(trips []Trip, stationNames []string) [][]string {
+	stations := Stations()
+	m := CsnMap(trips, stations)
+	nvm := NameVertexM(stations)
+	set := Arrs2Set(stationNames)
+	table := make([][]string, 0)
+	table = append(table, []string{"line", "sid", "eid", "direction", "sn", "en", "num"})
+	for key, num := range m {
+		list := strings.Split(key, "_")
+		sv, ev := nvm[list[0]], nvm[list[1]]
+		//通过sv, ev交集算出线路
+		lines := Intersection(LinesByIds(sv.Ids), LinesByIds(ev.Ids))
+		if len(lines) > 1 {
+			//fmt.Println(sv, ev) //todo::log
+		}
+		sid := IdByLine(lines[0], sv.Ids)
+		eid := IdByLine(lines[0], ev.Ids)
+		direction := strings.Compare(sid, eid)
+		if len(stationNames) == 0 {
+			table = append(table, []string{lines[0], sid, eid, strconv.Itoa(direction), sv.Name, ev.Name, strconv.Itoa(num)})
+		} else if set[sv.Name] && set[ev.Name] {
+			table = append(table, []string{lines[0], sid, eid, strconv.Itoa(direction), sv.Name, ev.Name, strconv.Itoa(num)})
+		}
+	}
+	return table
+}
 ```
 
 ### 样例数据

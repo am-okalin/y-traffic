@@ -15,7 +15,7 @@ const (
 	Analysis29        = "../file/source/analysis_2_9.csv"
 	PrefixLine        = "../file/source/line/"
 	PrefixLineDate    = "../file/source/linedate/"
-	StationsData      = "../file/station/pastNames.csv"
+	StationsData      = "../file/station/stations.csv"
 	Odm0816           = "../file/odm/0816.csv"
 	Odm08160709past   = "../file/odm/08167090past.csv"
 	Csn08167090past   = "../file/csn/08167090past.csv"

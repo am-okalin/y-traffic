@@ -83,11 +83,12 @@ func InitGraph(objs []Station, length int) dijkstra.Graph {
 		}
 	}
 
-	//fmt.Println(graph)
+	fmt.Println(graph)
 
 	return graph
 }
 
+// Navigations 任意两点间最短路径
 func Navigations(objs []Station) []Navigation {
 	length := VertexLen(objs)
 	graph := InitGraph(objs, length)
